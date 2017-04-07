@@ -1,70 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>File read test</title>
-
+    <title>File read test</title>
 </head>
-
 <body>
+    <script src="jbd.js"></script>
+    <p>
+        <input type='file' accept='*.dat' onchange='openFile(event)'>
+    </p>
+    <div id="content">
+      
+    </div>
 
-<p><input type='file' accept='*.dat' onchange='openFile(event)'></p>
+    <script type="text/javascript">
 
-<input type='button' id="btnPrev" value="Prev <" onclick="goRecord(-1)" />
+        var items = [];
 
-<input type='text' id="txtName" />
-<input type='text' id="txtAdd1" />
-<input type='text' id="txtAdd2" />
-<input type='text' id="txtAge" />
+        function buildTable() {
+            var table = " <table id='statsTable'><thead><th>name</th><th>unique</th><th>tks</th><th>damage</th><th>deaths</th><th>kills</th><th>shots</th><th>hits</th><th>hs</th><th>bDefusions</th><th>bDefused</th><th>bPlants</th><th>bExplosions</th></thead>";
+            for (var i = 0; i < items.length; i++) {
+                var entry = items[i];
+                table += "<tr>" +
+                    "<td>" + entry.name + "</td>" +
+                    "<td>" + entry.unique + "</td>" +
+                    "<td>" + entry.tks + "</td>" +
+                    "<td>" + entry.damage + "</td>" +
+                    "<td>" + entry.deaths + "</td>" +
+                    "<td>" + entry.kills + "</td>" +
+                    "<td>" + entry.shots + "</td>" +
+                    "<td>" + entry.hits + "</td>" +
+                    "<td>" + entry.hs + "</td>" +
+                    "<td>" + entry.bDefusions + "</td>" +
+                    "<td>" + entry.bDefused + "</td>" +
+                    "<td>" + entry.bPlants + "</td>" +
+                    "<td>" + entry.bExplosions + "</td>" +
+                   "</tr>";
+            }
 
-<input type='button' id="btnNext" value="> Next" onclick="goRecord(+1)" />
+            table += "</table>";
 
 
-<script type="text/javascript">
-  var data = [], cur;
-  var inputs = ["txtName", "txtAdd1", "txtAdd2", "txtAge"]; //id of inputs
-
-  function openFile(event) {
-
-    var input = event.target;
-
-    var reader = new FileReader();
-
-    reader.onload = function () {
-      var text = reader.result;
-      //if (text!=null && text.length>0)
-      var lines = text.split(/\r?\n/g); //split by newline chars to get all lines as array
-      var k = -1;
-      for (var i = 1; i < lines.length; i++) { //skip first line as it is Nlines
-        var r = lines[i].replace(/"/g, "").split(","); //remove quotation marks and split to cols
-        if (r.length == inputs.length) { //this row has correct number of columns (4)
-          k++;
-          data[k] = [];
-          for (var j = 0; j < r.length; j++) {
-            data[k][j] = r[j];
-          }
+            var div = document.getElementById('content');
+            div.innerHTML = table;
         }
-      }
-      cur = 0; dispRecord(cur); //go to first record
-    };
 
-    reader.readAsText(input.files[0]);
-  }
+        function openFile(event) {
+            var input = event.target;
+            var reader = new FileReader();
 
-  function dispRecord(r) {
-    var n = data[r].length;
-    for (var j = 0; j < n; j++) {
-      document.getElementById(inputs[j]).value = data[r][j];
-    }
-  }
+            reader.onload = function () {
+                var item = {};
+                var binaryData = reader.result;
+                var br = new BinaryReader(binaryData);
 
-  function goRecord(step) {
-    var k = cur + step;
-    if (k < 0) k = 0; else if (k >= data.length) k = data.length - 1;
-    cur = k;
-    dispRecord(cur);
-  }
 
-</script>
+                var vers = br.readInt16();
+                if (vers !== 11) {
+                    return;
+                }
 
+                var num = br.readUInt16();
+                while (num != 0) {
+
+                    var name = br.readString(num);
+                    num = br.readUInt16();
+                    var unique = br.readString(num);
+
+                    item.name = name;//Encoding.ASCII.GetString(name, 0, name.Length - 1);
+                    item.unique = unique;//Encoding.ASCII.GetString(unique, 0, unique.Length - 1);
+                    item.tks = br.readUInt32();
+                    item.damage = br.readUInt32();
+                    item.deaths = br.readUInt32();
+                    item.kills = br.readInt32();
+                    item.shots = br.readUInt32();
+                    item.hits = br.readUInt32();
+                    item.hs = br.readUInt32();
+                    item.bDefusions = br.readUInt32();
+                    item.bDefused = br.readUInt32();
+                    item.bPlants = br.readUInt32();
+                    item.bExplosions = br.readUInt32();
+
+                    //for (int i = 0; i < entry.bodyHits.Length; i++)
+                    //{
+                    //    entry.bodyHits[i] = br.ReadUInt32();
+                    //}
+
+                    num = br.readUInt16();
+
+                    items.push(item);
+                }
+                buildTable();
+            };
+            reader.readAsText(input.files[0]);
+        }
+    </script>
 </body>
 </html>

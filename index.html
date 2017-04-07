@@ -1,1 +1,70 @@
-<h1>hello</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File read test</title>
+
+</head>
+
+<body>
+
+<p><input type='file' accept='*.dat' onchange='openFile(event)'></p>
+
+<input type='button' id="btnPrev" value="Prev <" onclick="goRecord(-1)" />
+
+<input type='text' id="txtName" />
+<input type='text' id="txtAdd1" />
+<input type='text' id="txtAdd2" />
+<input type='text' id="txtAge" />
+
+<input type='button' id="btnNext" value="> Next" onclick="goRecord(+1)" />
+
+
+<script type="text/javascript">
+  var data = [], cur;
+  var inputs = ["txtName", "txtAdd1", "txtAdd2", "txtAge"]; //id of inputs
+
+  function openFile(event) {
+
+    var input = event.target;
+
+    var reader = new FileReader();
+
+    reader.onload = function () {
+      var text = reader.result;
+      //if (text!=null && text.length>0)
+      var lines = text.split(/\r?\n/g); //split by newline chars to get all lines as array
+      var k = -1;
+      for (var i = 1; i < lines.length; i++) { //skip first line as it is Nlines
+        var r = lines[i].replace(/"/g, "").split(","); //remove quotation marks and split to cols
+        if (r.length == inputs.length) { //this row has correct number of columns (4)
+          k++;
+          data[k] = [];
+          for (var j = 0; j < r.length; j++) {
+            data[k][j] = r[j];
+          }
+        }
+      }
+      cur = 0; dispRecord(cur); //go to first record
+    };
+
+    reader.readAsText(input.files[0]);
+  }
+
+  function dispRecord(r) {
+    var n = data[r].length;
+    for (var j = 0; j < n; j++) {
+      document.getElementById(inputs[j]).value = data[r][j];
+    }
+  }
+
+  function goRecord(step) {
+    var k = cur + step;
+    if (k < 0) k = 0; else if (k >= data.length) k = data.length - 1;
+    cur = k;
+    dispRecord(cur);
+  }
+
+</script>
+
+</body>
+</html>

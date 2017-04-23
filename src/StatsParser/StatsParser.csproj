@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Collections.NonGeneric">
+      <HintPath>C:\Users\Andron\.nuget\packages\system.collections.nongeneric\4.3.0\ref\netstandard1.3\System.Collections.NonGeneric.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,38 @@
+<h1>Player statistics</h1>
+
+<table class="table" *ngIf="statistics">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Unique</th>
+            <th>Team kills</th>
+            <th>Damage</th>
+            <th>Deaths</th>
+            <th>Kills</th>
+            <th>Shots</th>
+            <th>Hits</th>
+            <th>Head shots</th>
+            <th>Bomb Defusions</th>
+            <th>Bomb Defused</th>
+            <th>Bomb Plants</th>
+            <th>Bomb Explosions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let s of statistics">
+            <td>{{s.name}}</td>
+            <td>{{s.unique}}</td>
+            <td>{{s.tks}}</td>
+            <td>{{s.damage}}</td>
+            <td>{{s.deaths}}</td>
+            <td>{{s.kills}}</td>
+            <td>{{s.shots}}</td>
+            <td>{{s.hits}}</td>
+            <td>{{s.hs}}</td>
+            <td>{{s.bDefusions}}</td>
+            <td>{{s.bDefused}}</td>
+            <td>{{s.bPlants}}</td>
+            <td>{{s.bExplosions}}</td>
+        </tr>
+    </tbody>
+</table>

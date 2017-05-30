@@ -1,4 +1,7 @@
-﻿using System.Web.Http;
+﻿using System.Configuration;
+using System.Net.Http;
+using System.Web.Http;
+using Swashbuckle.Application;
 
 namespace CS.Service.WebHost
 {
@@ -16,6 +19,12 @@ namespace CS.Service.WebHost
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+            config.Routes.MapHttpRoute("Swagger", "", null, null, new RedirectHandler(OurRouteResolver, "swagger/ui/index"));
+        }
+
+        private static string OurRouteResolver(HttpRequestMessage arg)
+        {
+            return ConfigurationManager.AppSettings["SwaggerUrl"]?.TrimEnd('/') ?? "http://localhost:1959";
         }
     }
 }

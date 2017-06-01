@@ -6,6 +6,7 @@ using AutoMapper;
 using CS.Service.Data;
 using CS.Service.DataAccess;
 using CS.Service.WebHost.Models;
+using Swashbuckle.Swagger.Annotations;
 
 namespace CS.Service.WebHost.Controllers
 {
@@ -15,11 +16,13 @@ namespace CS.Service.WebHost.Controllers
 
         private IMapper Mapper => _mapper ?? (_mapper = new AutoMapperConfigurator().Initialize());
 
+        [Route("api/stats")]
+        [SwaggerResponse(HttpStatusCode.OK, "Ok", typeof(IEnumerable<StatisticsEntry>))]
         public HttpResponseMessage GetLatestStatistics()
         {
             return Request.CreateResponse(GetStatsFromDatabase());
         }
-
+        
         private IEnumerable<StatisticsEntry> GetStatsFromDatabase()
         {
             List<StatisticsEntry> stats;
@@ -37,6 +40,8 @@ namespace CS.Service.WebHost.Controllers
 
         //}
 
+        [Route("api/stats/add")]
+        [SwaggerResponse(HttpStatusCode.OK, "Ok")]
         public HttpResponseMessage PostNewStatistic(StatisticsEntry newStatistic)
         {
             AddToDatabase(newStatistic);
